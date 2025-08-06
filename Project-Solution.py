@@ -1,8 +1,8 @@
 # Databricks notebook source
 sales_df = spark.read.option("header", "true").option("inferSchema", "true").csv("/Volumes/upload/default/files/sales_data.csv")
 store_df = spark.read.option("header", "true").option("inferSchema", "true").csv("/Volumes/upload/default/files/store_data.csv")
-display(sales_df.sample(fraction=0.25))
-display(store_df.sample(fraction=0.5))
+display(sales_df.sample(fraction=0.01))
+display(store_df.sample(fraction=0.4))
 
 # COMMAND ----------
 
@@ -27,13 +27,13 @@ sales_df = sales_df.filter(col("store_id").isNotNull())
 sales_df = sales_df.filter(col("sale_date").isNotNull())
 sales_df = sales_df.filter((col("quantity") > 0) & (col("total_amount") > 0.0))
 
-display(sales_df.sample(fraction=0.25))
+display(sales_df.sample(fraction=0.015))
 
 
 # COMMAND ----------
 
 sales_store_df = sales_df.join(store_df, on="store_id", how="inner")
-display(sales_store_df.sample(fraction=0.05))
+display(sales_store_df.sample(fraction=0.01))
 
 # COMMAND ----------
 
@@ -42,7 +42,7 @@ from pyspark.sql.functions import year, col, round
 sales_store_df = sales_store_df.withColumn("sale_year", year(col("sale_date")))
 sales_store_df = sales_store_df.filter(col("store_size").isNotNull())
 sales_store_df = sales_store_df.withColumn("sales_per_sqft", round(col("total_amount") / col("store_size"), 2))
-display(sales_store_df)
+display(sales_store_df.sample(fraction=0.04))
 
 # COMMAND ----------
 
